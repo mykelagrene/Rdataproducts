@@ -26,28 +26,40 @@ knit        : slidify::knit2slides
 * The relationship between hp and weight and 1/4 mile speed can be seen here:
 
 
-![plot of chunk unnamed-chunk-1](assets/fig/unnamed-chunk-1-1.png) 
+```{r, echo=FALSE, fig.width=10, fig.height=5}
+library(ggplot2)
+library(gridExtra)
+
+plot1 <- ggplot(mtcars, aes(x=hp, y=qsec)) + geom_point(shape=1) +
+        scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+        geom_smooth(method=lm, fullrange=TRUE) + # Add linear regression lines
+        theme(legend.title=element_blank()) +
+        ylab("1/4 mile time (sec)")
+        
+plot2 <- ggplot(mtcars, aes(x=wt, y=qsec)) + geom_point(shape=1) +
+        scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+        geom_smooth(method=lm, fullrange=TRUE)  + # Add linear regression lines
+        theme(legend.title=element_blank()) +
+        xlab("wt/1000lbs") +
+        ylab("1/4 mile time (sec)")
+                    
+
+grid.arrange(plot1, plot2, ncol=2)
+```
 
 ---
 
 ## The Predictor Algorithm
 
 * First we fit a linear model:
-
-```r
+```{r}
 fit1 <- lm(qsec~hp + wt, data = mtcars)
 ```
 
 * We can predict the 1/4 mile time for a vehicle of 2000lbs and 200hp:
-
-```r
+```{r}
 predict(fit1, data.frame(hp = 200, wt = 2),
         interval = "prediction")
-```
-
-```
-##        fit      lwr     upr
-## 1 15.24673 12.77815 17.7153
 ```
 
 * Notice the prediction interval is several seconds. But if you want more precision, you will have to pay for the upgraded app!
